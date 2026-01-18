@@ -28,13 +28,14 @@ export default {
     } catch (e: unknown) {
       if (isAxiosError(e)) {
         //Axios specific errors
-        const error: ErrorResponse = e.response?.data;
-        console.error('API Error:', error.message);
-        throw new Error(error.message || 'An unexpected error occurred.');
+        const error: ErrorResponse | undefined = e.response?.data;
+        const errorMessage = error?.message || e.message || 'Failed to fetch credentials from backend.';
+        console.error('API Error:', errorMessage, e.response?.status);
+        throw new Error(errorMessage);
       } else {
         //unexpected errors
         console.error('Unexpected Error:', e);
-        throw new Error('An unexpected error occurred.');
+        throw new Error('An unexpected error occurred while fetching credentials.');
       }
     }
   },
@@ -50,16 +51,16 @@ export default {
       );
       return response?.data;
     } catch (e: unknown) {
-      // @ts-ignore
       if (isAxiosError(e)) {
         //Axios specific errors
-        const error: ErrorResponse = e.response?.data;
-        console.error('API Error:', error.message);
-        throw new Error(error.message || 'An unexpected error occurred.');
+        const error: ErrorResponse | undefined = e.response?.data;
+        const errorMessage = error?.message || e.message || 'Failed to manage credential.';
+        console.error('API Error:', errorMessage, e.response?.status);
+        throw new Error(errorMessage);
       } else {
         //unexpected errors
         console.error('Unexpected Error:', e);
-        throw new Error('An unexpected error occurred.');
+        throw new Error('An unexpected error occurred while managing credential.');
       }
     }
   },
