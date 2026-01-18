@@ -21,7 +21,8 @@ interface ErrorResponse {
 export default {
   getCredentials: async (status: CredentialStatus) => {
     try {
-      const response: ApiResponse<any> = await axios.get('/requests', {
+      // Proxy handles the /requests endpoint
+      const response: ApiResponse<any> = await axios.get('/', {
         params: { status },
       });
       return response?.data?.data;
@@ -41,9 +42,11 @@ export default {
   },
   manageCredential: async ({id, action, exp_date, identifiable_data}: { id: string, action: 'approve' | 'reject', exp_date?: Dayjs, identifiable_data?: IdentifiableData}) => {
     try {
+      // Proxy handles the /requests/{id}/action endpoint
       const response: ApiResponse<any> = await axios.post(
-        `/requests/${id}/action`,
+        `/`,
         {
+          id,
           action,
           identifiable_data,
           exp_date,

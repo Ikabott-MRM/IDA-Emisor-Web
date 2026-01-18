@@ -1,9 +1,11 @@
 import axios from 'axios';
 
+// Use local proxy API route instead of direct backend call
+// This avoids mixed content blocking (HTTPS → HTTP)
 const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: '/api/proxy',
 });
 
-instance.defaults.headers['x-api-key'] = process.env.NEXT_PUBLIC_API_KEY || '';
+// No need for x-api-key header here - the proxy handles it server-side
 
 export default instance;
