@@ -36,3 +36,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firestore credentials
+ida-test-b219e-656ec87b9842.json

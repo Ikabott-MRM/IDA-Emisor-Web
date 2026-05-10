@@ -28,13 +28,13 @@ export default function Home() {
               <div className="flex items-center justify-center py-4">
                 <Image
                   src="/images/logo-demo.png"
-                  alt="IDA Demo - Portal Gobierno"
+                  alt="IDA PROD - Portal Gobierno"
                   width={100}
                   height={56}
                   priority
                 />
                 <div className="border-l-4 border-white pl-3 ml-3">
-                  <h1 className="text-2xl font-bold text-white">DEMO - Portal Emisor</h1>
+                  <h1 className="text-2xl font-bold text-white">PROD - Portal Emisor</h1>
                   <h2 className="text-xl text-white">Gestión de Credenciales Verificables</h2>
                 </div>
               </div>

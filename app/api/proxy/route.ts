@@ -1,13 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://100.27.228.0:3000').replace(/\/$/, '');
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
+function resolveBackend() {
+  const raw = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+  if (!raw) {
+    return { base: '', key: process.env.NEXT_PUBLIC_API_KEY || '' };
+  }
+  return {
+    base: raw.replace(/\/+$/, ''),
+    key: process.env.NEXT_PUBLIC_API_KEY || '',
+  };
+}
+
+function misconfiguredResponse() {
+  return NextResponse.json(
+    {
+      error: 'Server misconfiguration',
+      details: 'Set NEXT_PUBLIC_API_BASE_URL (and NEXT_PUBLIC_API_KEY) on the host or in .env.local for local dev.',
+    },
+    { status: 503 },
+  );
+}
 
 export async function GET(request: NextRequest) {
   try {
+    const { base: API_BASE_URL, key: API_KEY } = resolveBackend();
+    if (!API_BASE_URL) {
+      return misconfiguredResponse();
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status');
-    
+
     const url = `${API_BASE_URL}/requests${status ? `?status=${status}` : ''}`;
     
     console.log('[Proxy GET] Fetching from:', url);
@@ -35,9 +58,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const { base: API_BASE_URL, key: API_KEY } = resolveBackend();
+    if (!API_BASE_URL) {
+      return misconfiguredResponse();
+    }
+
     const body = await request.json();
     const { id, action, exp_date, identifiable_data } = body;
-    
+
     const url = `${API_BASE_URL}/requests/${id}/action`;
     
     console.log('[Proxy POST] Sending to:', url);
