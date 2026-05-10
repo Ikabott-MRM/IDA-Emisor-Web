@@ -1,13 +1,25 @@
 import axios from './axios';
-import {CredentialStatus} from "@/@types/credential";
-import {Dayjs} from "dayjs";
-import {isAxiosError} from 'axios';
+import { CredentialStatus } from '@/@types/credential';
+import { Dayjs } from 'dayjs';
+import { isAxiosError } from 'axios';
+
+export type TranslateFn = (
+  key: string,
+  vars?: Record<string, string>,
+) => string;
 
 type IdentifiableData = {
-  name: string,
-  lastname: string,
-  category: string,
-}
+  name: string;
+  lastname: string;
+  category: string;
+};
+
+export type ManageCredentialPayload = {
+  id: string;
+  action: 'approve' | 'reject';
+  exp_date?: Dayjs;
+  identifiable_data?: IdentifiableData;
+};
 
 interface ApiResponse<T> {
   data: T;
@@ -19,7 +31,10 @@ interface ErrorResponse {
 }
 
 export default {
-  getCredentials: async (status: CredentialStatus) => {
+  getCredentials: async (
+    status: CredentialStatus,
+    t: TranslateFn,
+  ) => {
     try {
       // Proxy handles the /requests endpoint
       const response: ApiResponse<any> = await axios.get('/', {
@@ -28,19 +43,22 @@ export default {
       return response?.data?.data;
     } catch (e: unknown) {
       if (isAxiosError(e)) {
-        //Axios specific errors
         const error: ErrorResponse | undefined = e.response?.data;
-        const errorMessage = error?.message || e.message || 'Failed to fetch credentials from backend.';
-        console.error('API Error:', errorMessage, e.response?.status);
-        throw new Error(errorMessage);
+        const detail = (error?.message || e.message || '').trim();
+        console.error('API Error:', detail || '(no message)', e.response?.status);
+        throw new Error(
+          detail
+            ? t('errors.fetchCredentialsWithDetail', { message: detail })
+            : t('errors.fetchCredentials'),
+        );
       } else {
-        //unexpected errors
         console.error('Unexpected Error:', e);
-        throw new Error('An unexpected error occurred while fetching credentials.');
+        throw new Error(t('errors.unexpectedFetch'));
       }
     }
   },
-  manageCredential: async ({id, action, exp_date, identifiable_data}: { id: string, action: 'approve' | 'reject', exp_date?: Dayjs, identifiable_data?: IdentifiableData}) => {
+  manageCredential: async (params: ManageCredentialPayload, t: TranslateFn) => {
+    const { id, action, exp_date, identifiable_data } = params;
     try {
       // Proxy handles the /requests/{id}/action endpoint
       const response: ApiResponse<any> = await axios.post(
@@ -50,20 +68,22 @@ export default {
           action,
           identifiable_data,
           exp_date,
-        }
+        },
       );
       return response?.data;
     } catch (e: unknown) {
       if (isAxiosError(e)) {
-        //Axios specific errors
         const error: ErrorResponse | undefined = e.response?.data;
-        const errorMessage = error?.message || e.message || 'Failed to manage credential.';
-        console.error('API Error:', errorMessage, e.response?.status);
-        throw new Error(errorMessage);
+        const detail = (error?.message || e.message || '').trim();
+        console.error('API Error:', detail || '(no message)', e.response?.status);
+        throw new Error(
+          detail
+            ? t('errors.manageCredentialWithDetail', { message: detail })
+            : t('errors.manageCredential'),
+        );
       } else {
-        //unexpected errors
         console.error('Unexpected Error:', e);
-        throw new Error('An unexpected error occurred while managing credential.');
+        throw new Error(t('errors.unexpectedManage'));
       }
     }
   },
