@@ -2,6 +2,12 @@ import type { NextAuthOptions } from 'next-auth';
 import CognitoProvider from 'next-auth/providers/cognito';
 
 const isProd = process.env.NODE_ENV === 'production';
+const prodBaseUrl = 'https://main.d1fkse5la21xp8.amplifyapp.com';
+if (isProd) {
+  process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || prodBaseUrl;
+  process.env.NEXTAUTH_URL_INTERNAL =
+    process.env.NEXTAUTH_URL_INTERNAL || prodBaseUrl;
+}
 
 // Temporary production workaround: force auth values in code until Amplify runtime env resolution is fixed.
 const PROD = {
