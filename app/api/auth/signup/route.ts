@@ -44,6 +44,25 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error('[auth][signup] error', error);
+
+    const cognitoError = error as { name?: string; message?: string };
+    if (cognitoError.name === 'UsernameExistsException') {
+      return NextResponse.json(
+        { error: 'This email is already registered. Please sign in or reset password.' },
+        { status: 400 }
+      );
+    }
+
+    if (cognitoError.name === 'InvalidPasswordException') {
+      return NextResponse.json(
+        {
+          error:
+            'Password does not meet policy. Use at least 12 characters with uppercase, lowercase, number, and symbol.',
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { error: 'Signup failed. Please try again.' },
       { status: 400 }
