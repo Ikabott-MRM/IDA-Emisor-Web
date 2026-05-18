@@ -35,6 +35,7 @@ const authSecret =
   process.env.AUTH_SECRET?.trim() ||
   process.env.IDENTITY_API_KEY?.trim() ||
   process.env.NEXT_PUBLIC_API_KEY?.trim();
+const authDebug = process.env.NEXTAUTH_DEBUG === 'true' || !isProd;
 
 export const authOptions: NextAuthOptions = {
   secret: authSecret,
@@ -66,10 +67,44 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
   },
-  debug: process.env.NODE_ENV !== 'production',
+  debug: authDebug,
+  callbacks: {
+    async signIn({ user, account, profile }) {
+      console.log('[next-auth][callback][signIn]', {
+        hasUser: !!user,
+        provider: account?.provider,
+        accountType: account?.type,
+        profileSub: (profile as { sub?: string } | undefined)?.sub,
+      });
+      return true;
+    },
+    async jwt({ token, account, profile, trigger }) {
+      console.log('[next-auth][callback][jwt]', {
+        trigger,
+        hasAccount: !!account,
+        provider: account?.provider,
+        profileSub: (profile as { sub?: string } | undefined)?.sub,
+        tokenSub: token?.sub,
+      });
+      return token;
+    },
+    async session({ session, token }) {
+      console.log('[next-auth][callback][session]', {
+        hasSessionUser: !!session?.user,
+        tokenSub: token?.sub,
+      });
+      return session;
+    },
+  },
   logger: {
     error(code, ...message) {
       console.error('[next-auth][error]', code, ...message);
+    },
+    warn(code, ...message) {
+      console.warn('[next-auth][warn]', code, ...message);
+    },
+    debug(code, ...message) {
+      console.log('[next-auth][debug]', code, ...message);
     },
   },
 };
