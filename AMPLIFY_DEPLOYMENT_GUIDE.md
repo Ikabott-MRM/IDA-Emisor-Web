@@ -175,9 +175,16 @@ Amplify → your **prod** app → **Hosting** → **Environment variables** (bra
 | Variable | Purpose |
 |----------|---------|
 | `NEXT_PUBLIC_API_BASE_URL` | Production identity API base URL (prefer HTTPS when API hostname is fully aligned; consistent trailing slash optional because proxy strips trailing slashes). |
-| `NEXT_PUBLIC_API_KEY` | API key; mark as **secret** / sensitive in the Amplify UI when available. |
+| `IDENTITY_API_KEY` | Server-only issuer API key used by `app/api/proxy/route.ts`; mark as **secret** / sensitive in Amplify. |
+| `NEXTAUTH_URL` | Public URL for the deployed branch (for example `https://main.d1fkse5la21xp8.amplifyapp.com`). |
+| `NEXTAUTH_SECRET` | Random secret used by NextAuth to sign session tokens (`openssl rand -base64 32`). |
+| `COGNITO_CLIENT_ID` | Cognito app client ID for this environment. |
+| `COGNITO_CLIENT_SECRET` | Cognito app client secret for this environment; store as secret. |
+| `COGNITO_ISSUER` | Cognito OIDC issuer URL: `https://cognito-idp.us-east-1.amazonaws.com/<USER_POOL_ID>`. |
+| `COGNITO_DOMAIN` | Cognito Hosted UI domain host, e.g. `ida-emisor-prod-42351.auth.us-east-1.amazoncognito.com`. |
+| `NEXT_PUBLIC_API_KEY` | Legacy fallback key used by older releases. Keep temporarily during transition; remove after auth rollout is verified. |
 
-**Creating this key:** The value must exist in the **same MySQL** the prod identity API uses (hashed rows in `api_keys`). From the `identity/` repo, run the script documented in [`identity/README.md`](../identity/README.md) under *create-api-key.ts* (or `npm run api-key:create -- "<description>" "<encryption-password>"`). The script prints the plaintext key once; paste it into Amplify as `NEXT_PUBLIC_API_KEY` only—never commit it. If keys already exist in that database, use the **same** encryption password as when the first key was created.
+**Creating this key:** The value must exist in the **same MySQL** the prod identity API uses (hashed rows in `api_keys`). From the `identity/` repo, run the script documented in [`identity/README.md`](../identity/README.md) under *create-api-key.ts* (or `npm run api-key:create -- "<description>" "<encryption-password>"`). The script prints the plaintext key once; paste it into Amplify as `IDENTITY_API_KEY` (and optionally `NEXT_PUBLIC_API_KEY` while migrating)—never commit it. If keys already exist in that database, use the **same** encryption password as when the first key was created.
 
 Redeploy (or trigger a new build) after every change so `next build` embeds the correct `NEXT_PUBLIC_*` values.
 
@@ -224,7 +231,13 @@ For local testing, create a `.env.local` file (see [`.env.example`](.env.example
 
 ```
 NEXT_PUBLIC_API_BASE_URL=https://your-staging-or-dev-api.example.com
-NEXT_PUBLIC_API_KEY=your-key
+IDENTITY_API_KEY=your-key
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=generate-with-openssl-rand-base64-32
+COGNITO_CLIENT_ID=your-cognito-client-id
+COGNITO_CLIENT_SECRET=your-cognito-client-secret
+COGNITO_ISSUER=https://cognito-idp.us-east-1.amazonaws.com/your-user-pool-id
+COGNITO_DOMAIN=your-domain.auth.us-east-1.amazoncognito.com
 ```
 
 Then run:
@@ -240,7 +253,7 @@ npm run dev
 Serving the issuer UI over **HTTPS** while calling an **HTTP** API from the browser causes mixed-content issues; this app uses **`/api/proxy`** so the browser talks same-origin HTTPS and the server calls the backend. For production:
 
 1. Use a stable **HTTPS** API URL in `NEXT_PUBLIC_API_BASE_URL`.
-2. Keep `NEXT_PUBLIC_API_KEY` out of git; use Amplify/Vercel environment configuration.
+2. Keep `IDENTITY_API_KEY`, `NEXTAUTH_SECRET`, and `COGNITO_CLIENT_SECRET` out of git; use Amplify/Vercel environment configuration.
 3. Rotate any key that appeared in old revisions of this guide or in chat logs.
 
 ---

@@ -41,5 +41,7 @@
   "errors.manageCredential": "Failed to process the request.",
   "errors.manageCredentialWithDetail": "Failed to process the request: {{message}}",
   "errors.unexpectedFetch": "An unexpected error occurred while loading requests.",
-  "errors.unexpectedManage": "An unexpected error occurred while processing the credential."
+  "errors.unexpectedManage": "An unexpected error occurred while processing the credential.",
+  "auth.signOut": "Sign out",
+  "auth.redirectingLogin": "Redirecting to secure login..."
 }

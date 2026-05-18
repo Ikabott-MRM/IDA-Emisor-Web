@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/auth';
 
 function resolveBackend() {
   const raw = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+  const key =
+    process.env.IDENTITY_API_KEY?.trim() || process.env.NEXT_PUBLIC_API_KEY || '';
   if (!raw) {
-    return { base: '', key: process.env.NEXT_PUBLIC_API_KEY || '' };
+    return { base: '', key };
   }
   return {
     base: raw.replace(/\/+$/, ''),
-    key: process.env.NEXT_PUBLIC_API_KEY || '',
+    key,
   };
 }
 
@@ -15,16 +19,30 @@ function misconfiguredResponse() {
   return NextResponse.json(
     {
       error: 'Server misconfiguration',
-      details: 'Set NEXT_PUBLIC_API_BASE_URL (and NEXT_PUBLIC_API_KEY) on the host or in .env.local for local dev.',
+      details:
+        'Set NEXT_PUBLIC_API_BASE_URL and IDENTITY_API_KEY on the host or in .env.local for local dev.',
     },
     { status: 503 },
   );
 }
 
+async function unauthorizedResponse() {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  return null;
+}
+
 export async function GET(request: NextRequest) {
   try {
+    const unauthorized = await unauthorizedResponse();
+    if (unauthorized) {
+      return unauthorized;
+    }
+
     const { base: API_BASE_URL, key: API_KEY } = resolveBackend();
-    if (!API_BASE_URL) {
+    if (!API_BASE_URL || !API_KEY) {
       return misconfiguredResponse();
     }
 
@@ -58,8 +76,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const unauthorized = await unauthorizedResponse();
+    if (unauthorized) {
+      return unauthorized;
+    }
+
     const { base: API_BASE_URL, key: API_KEY } = resolveBackend();
-    if (!API_BASE_URL) {
+    if (!API_BASE_URL || !API_KEY) {
       return misconfiguredResponse();
     }
 

@@ -41,5 +41,7 @@
   "errors.manageCredential": "No se pudo procesar la solicitud.",
   "errors.manageCredentialWithDetail": "Error al procesar la solicitud: {{message}}",
   "errors.unexpectedFetch": "Ocurrió un error inesperado al cargar las solicitudes.",
-  "errors.unexpectedManage": "Ocurrió un error inesperado al procesar la credencial."
+  "errors.unexpectedManage": "Ocurrió un error inesperado al procesar la credencial.",
+  "auth.signOut": "Cerrar sesión",
+  "auth.redirectingLogin": "Redirigiendo al inicio de sesión seguro..."
 }

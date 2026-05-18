@@ -7,6 +7,7 @@ import CredentialsList from '@/app/credenciales/components/CredentialsList';
 import { SnackbarProvider } from '@/context/SnackbarContext';
 import { useI18n } from '@/lib/i18n/I18nProvider';
 import { Button } from '@mui/material';
+import { signOut } from 'next-auth/react';
 
 function HomeContent() {
   const { locale, setLocale, t } = useI18n();
@@ -48,6 +49,14 @@ function HomeContent() {
                   sx={{ color: locale === 'es' ? undefined : 'white' }}
                 >
                   {t('lang.es')}
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => void signOut({ callbackUrl: '/login' })}
+                  sx={{ color: 'white', borderColor: 'white' }}
+                >
+                  {t('auth.signOut')}
                 </Button>
               </div>
             </div>
