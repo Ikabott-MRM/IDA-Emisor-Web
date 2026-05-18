@@ -1,34 +1,55 @@
 import type { NextAuthOptions } from 'next-auth';
 import CognitoProvider from 'next-auth/providers/cognito';
 
-const cognitoDomain = process.env.COGNITO_DOMAIN?.trim();
-const cognitoBaseUrl = cognitoDomain ? `https://${cognitoDomain}` : '';
+const isProd = process.env.NODE_ENV === 'production';
+
+// Temporary production workaround: force auth values in code until Amplify runtime env resolution is fixed.
+const PROD = {
+  secret:
+    'Lv3alFGMqJ064VQU+zYv6zCoowUizS1oYuBnDGWdmsxWlsWwWY0Z09I5yqj00sfz',
+  issuer: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_VLok2ozQ6',
+  domain: 'ida-emisor-prod-42351.auth.us-east-1.amazoncognito.com',
+  clientId: '6n193icf5uh5pmp1vef7gqvbh8',
+  clientSecret: 'nsmm283c2a1r3djhuuascv0oe7vgvn15n1h46jjblrbn7fd4e7q',
+};
+
+const domain = isProd
+  ? PROD.domain
+  : process.env.COGNITO_DOMAIN?.trim() || '';
+const baseUrl = domain ? `https://${domain}` : '';
+
+const issuer = isProd ? PROD.issuer : process.env.COGNITO_ISSUER;
+const clientId = isProd ? PROD.clientId : process.env.COGNITO_CLIENT_ID || '';
+const clientSecret = isProd
+  ? PROD.clientSecret
+  : process.env.COGNITO_CLIENT_SECRET || '';
+
 const authSecret =
-  process.env.NEXTAUTH_SECRET?.trim() ||
+  (isProd ? PROD.secret : process.env.NEXTAUTH_SECRET?.trim()) ||
+  process.env.AUTH_SECRET?.trim() ||
   process.env.IDENTITY_API_KEY?.trim() ||
-  process.env.COGNITO_CLIENT_SECRET?.trim() ||
   process.env.NEXT_PUBLIC_API_KEY?.trim();
 
 export const authOptions: NextAuthOptions = {
   secret: authSecret,
   providers: [
     CognitoProvider({
-      clientId: process.env.COGNITO_CLIENT_ID || '',
-      clientSecret: process.env.COGNITO_CLIENT_SECRET || '',
-      issuer: process.env.COGNITO_ISSUER,
-      ...(process.env.COGNITO_ISSUER
+      clientId,
+      clientSecret,
+      issuer,
+      ...(issuer
         ? {
-            wellKnown: `${process.env.COGNITO_ISSUER}/.well-known/openid-configuration`,
+            wellKnown: `${issuer}/.well-known/openid-configuration`,
           }
         : {}),
-      ...(cognitoBaseUrl
+      ...(baseUrl
         ? {
             authorization: {
-              url: `${cognitoBaseUrl}/oauth2/authorize`,
+              url: `${baseUrl}/oauth2/authorize`,
               params: { scope: 'openid email profile' },
             },
-            token: `${cognitoBaseUrl}/oauth2/token`,
-            userinfo: `${cognitoBaseUrl}/oauth2/userInfo`,
+            token: `${baseUrl}/oauth2/token`,
+            userinfo: `${baseUrl}/oauth2/userInfo`,
           }
         : {}),
     }),
