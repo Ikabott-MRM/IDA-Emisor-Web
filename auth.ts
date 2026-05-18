@@ -3,8 +3,14 @@ import CognitoProvider from 'next-auth/providers/cognito';
 
 const cognitoDomain = process.env.COGNITO_DOMAIN?.trim();
 const cognitoBaseUrl = cognitoDomain ? `https://${cognitoDomain}` : '';
+const authSecret =
+  process.env.NEXTAUTH_SECRET?.trim() ||
+  process.env.IDENTITY_API_KEY?.trim() ||
+  process.env.COGNITO_CLIENT_SECRET?.trim() ||
+  process.env.NEXT_PUBLIC_API_KEY?.trim();
 
 export const authOptions: NextAuthOptions = {
+  secret: authSecret,
   providers: [
     CognitoProvider({
       clientId: process.env.COGNITO_CLIENT_ID || '',
