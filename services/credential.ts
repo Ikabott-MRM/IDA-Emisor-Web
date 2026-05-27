@@ -9,9 +9,7 @@ export type TranslateFn = (
 ) => string;
 
 type IdentifiableData = {
-  name: string;
-  lastname: string;
-  category: string;
+  [key: string]: string;
 };
 
 export type ManageCredentialPayload = {

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="96" viewBox="0 0 320 96" role="img" aria-label="Zijin Mining">
+  <rect width="320" height="96" rx="8" fill="#ffffff" />
+  <circle cx="42" cy="48" r="26" fill="#C5A028" />
+  <path d="M29 52l13-20 13 20H29z" fill="#0B3D6E" />
+  <text x="80" y="44" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0B3D6E">ZIJIN</text>
+  <text x="80" y="66" font-family="Arial, sans-serif" font-size="17" fill="#1A1A1A">MINING</text>
+</svg>

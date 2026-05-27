@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from 'react';
 import { signIn } from 'next-auth/react';
+import Image from 'next/image';
+import { zijinBrand } from '@/lib/brand/zijin';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -61,14 +63,27 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <main
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: zijinBrand.colors.background }}
+    >
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow">
+        <div className="mb-6 flex justify-center">
+          <Image
+            src={zijinBrand.logos.header}
+            alt="Zijin Mining"
+            width={188}
+            height={56}
+            priority
+          />
+        </div>
         <h1 className="mb-4 text-xl font-semibold text-gray-900">Secure login</h1>
 
         <button
           type="button"
           onClick={handleSignIn}
-          className="mb-6 w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          className="mb-6 w-full rounded px-4 py-2 text-white"
+          style={{ backgroundColor: zijinBrand.colors.primary }}
         >
           Sign in with Cognito
         </button>
@@ -107,7 +122,8 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded bg-gray-800 px-4 py-2 text-white hover:bg-black disabled:opacity-60"
+            className="w-full rounded px-4 py-2 text-white disabled:opacity-60"
+            style={{ backgroundColor: zijinBrand.colors.primaryDark }}
           >
             {loading
               ? 'Please wait...'

@@ -139,6 +139,9 @@ export default function CredentialsList() {
               <Typography variant="h6">
                 {t('details.created')}: {formatDate(created_at)}
               </Typography>
+              <Typography variant="h6">
+                {t('details.documentType')}: {t(`credentialType.${schema_id}`)}
+              </Typography>
               <Image
                 src={`${apiBaseUrl}/${document_url.replace(/^\//, '')}`}
                 width={500}

@@ -8,20 +8,27 @@ import { SnackbarProvider } from '@/context/SnackbarContext';
 import { useI18n } from '@/lib/i18n/I18nProvider';
 import { Button } from '@mui/material';
 import { signOut } from 'next-auth/react';
+import { zijinBrand } from '@/lib/brand/zijin';
 
 function HomeContent() {
   const { locale, setLocale, t } = useI18n();
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-grow bg-gray-50 flex flex-col items-center">
-        <header className="w-full bg-[#BB2929] shadow-md top-0 left-0 z-50">
+      <main
+        className="flex-grow flex flex-col items-center"
+        style={{ backgroundColor: zijinBrand.colors.background }}
+      >
+        <header
+          className="w-full shadow-md top-0 left-0 z-50"
+          style={{ backgroundColor: zijinBrand.colors.primary }}
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-center justify-center gap-3 py-4">
               <Image
-                src="/images/logo-demo.png"
-                alt={t('header.logoAlt')}
-                width={100}
+                src={zijinBrand.logos.header}
+                alt={t(zijinBrand.logos.headerAltKey)}
+                width={188}
                 height={56}
                 priority
               />
@@ -63,13 +70,16 @@ function HomeContent() {
           </div>
         </header>
         <div className="w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-xl font-semibold text-gray-700 mt-4 mb-6">
+          <h2 className="text-xl font-semibold mt-4 mb-6 text-[#1A1A1A]">
             {t('requestsList.title')}
           </h2>
           <CredentialsList />
         </div>
       </main>
-      <footer className="w-full bg-gray-500 text-white py-4 flex justify-center items-center">
+      <footer
+        className="w-full text-white py-4 flex justify-center items-center"
+        style={{ backgroundColor: zijinBrand.colors.primaryDark }}
+      >
         <p
           className="text-sm font-bold"
           style={{ fontFamily: 'Roboto, sans-serif' }}
@@ -78,9 +88,9 @@ function HomeContent() {
         </p>
         <div className="ml-2">
           <Image
-            src="/images/logo-iovf-white.png"
-            alt={t('footer.logoAlt')}
-            width={100}
+            src={zijinBrand.logos.footer}
+            alt={t(zijinBrand.logos.footerAltKey)}
+            width={188}
             height={56}
             priority
           />

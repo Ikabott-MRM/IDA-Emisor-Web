@@ -7,7 +7,7 @@ import { AuthSessionProvider } from '@/app/AuthSessionProvider';
 const roboto = Roboto({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
 export const metadata: Metadata = {
-  title: 'Issuer Portal',
+  title: 'Zijin Mining Issuer Portal',
 };
 
 export default function RootLayout({
