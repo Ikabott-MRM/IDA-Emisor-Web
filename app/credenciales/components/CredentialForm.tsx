@@ -105,33 +105,32 @@ const CredentialForm = ({
     values: FormData,
     _event: BaseSyntheticEvent<object, any, any> | undefined,
   ) => {
-    const payload = isProductionRegistry
-      ? {
-          identifiable_data: {
-            tipo: values[`${id}_type`],
-            cantidad: values[`${id}_quantity`],
-            precio: values[`${id}_price`],
-            fecha_entrega: values[`${id}_deliveryDate`]?.format('YYYY-MM-DD'),
-          },
-          exp_date: values[`${id}_deliveryDate`]
-            ?.add(1, 'year')
-            .format('YYYY-MM-DD'),
-        }
-      : {
-          identifiable_data: {
-            name: values[`${id}_firstName`],
-            lastname: values[`${id}_lastName`],
-            category: values[`${id}_licenseCategory`],
-          },
-          exp_date: values[`${id}_expirationDate`]?.format('YYYY-MM-DD'),
-        };
+    let identifiableData: Record<string, string>;
+    let expDate = '';
+
+    if (isProductionRegistry) {
+      identifiableData = {
+        tipo: values[`${id}_type`],
+        cantidad: values[`${id}_quantity`],
+        precio: values[`${id}_price`],
+        fecha_entrega: values[`${id}_deliveryDate`]?.format('YYYY-MM-DD') ?? '',
+      };
+      expDate = values[`${id}_deliveryDate`]?.add(1, 'year').format('YYYY-MM-DD') ?? '';
+    } else {
+      identifiableData = {
+        name: values[`${id}_firstName`],
+        lastname: values[`${id}_lastName`],
+        category: values[`${id}_licenseCategory`],
+      };
+      expDate = values[`${id}_expirationDate`]?.format('YYYY-MM-DD') ?? '';
+    }
 
     manageCredential(
       {
         id,
         action: 'approve',
-        identifiable_data: payload.identifiable_data,
-        exp_date: dayjs(payload.exp_date),
+        identifiable_data: identifiableData,
+        exp_date: dayjs(expDate),
       },
       {
         onSuccess: () => {
