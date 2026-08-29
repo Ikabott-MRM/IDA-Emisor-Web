@@ -11,10 +11,14 @@ const PROD = {
 
 export function getCognitoServerConfig() {
   return {
-    clientId: isProd ? PROD.clientId : process.env.COGNITO_CLIENT_ID || '',
-    clientSecret: isProd
-      ? PROD.clientSecret
-      : process.env.COGNITO_CLIENT_SECRET || '',
+    clientId:
+      process.env.COGNITO_CLIENT_ID?.trim() ||
+      (isProd ? PROD.clientId : '') ||
+      '',
+    clientSecret:
+      process.env.COGNITO_CLIENT_SECRET?.trim() ||
+      (isProd ? PROD.clientSecret : '') ||
+      '',
     region: process.env.AWS_REGION || PROD.region,
   };
 }

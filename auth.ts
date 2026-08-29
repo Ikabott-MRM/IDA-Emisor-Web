@@ -2,14 +2,17 @@ import type { NextAuthOptions } from 'next-auth';
 import CognitoProvider from 'next-auth/providers/cognito';
 
 const isProd = process.env.NODE_ENV === 'production';
-const prodBaseUrl = 'https://main.d1fkse5la21xp8.amplifyapp.com';
+// Prefer Amplify/runtime env; keep old Amplify URL only as last-resort fallback.
+const prodBaseUrl =
+  process.env.NEXTAUTH_URL?.trim() ||
+  'https://main.d26n82vm7gk12r.amplifyapp.com';
 if (isProd) {
   process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || prodBaseUrl;
   process.env.NEXTAUTH_URL_INTERNAL =
-    process.env.NEXTAUTH_URL_INTERNAL || prodBaseUrl;
+    process.env.NEXTAUTH_URL_INTERNAL || process.env.NEXTAUTH_URL || prodBaseUrl;
 }
 
-// Temporary production workaround: force auth values in code until Amplify runtime env resolution is fixed.
+// Legacy hardcoded prod (old AWS account) — only used if env vars are missing.
 const PROD = {
   secret:
     'Lv3alFGMqJ064VQU+zYv6zCoowUizS1oYuBnDGWdmsxWlsWwWY0Z09I5yqj00sfz',
@@ -19,20 +22,22 @@ const PROD = {
   clientSecret: 'nsmm283c2a1r3djhuuascv0oe7vgvn15n1h46jjblrbn7fd4e7q',
 };
 
-const domain = isProd
-  ? PROD.domain
-  : process.env.COGNITO_DOMAIN?.trim() || '';
+const domain =
+  process.env.COGNITO_DOMAIN?.trim() || (isProd ? PROD.domain : '');
 const baseUrl = domain ? `https://${domain}` : '';
 
-const issuer = isProd ? PROD.issuer : process.env.COGNITO_ISSUER;
-const clientId = isProd ? PROD.clientId : process.env.COGNITO_CLIENT_ID || '';
-const clientSecret = isProd
-  ? PROD.clientSecret
-  : process.env.COGNITO_CLIENT_SECRET || '';
+const issuer = process.env.COGNITO_ISSUER?.trim() || (isProd ? PROD.issuer : undefined);
+const clientId =
+  process.env.COGNITO_CLIENT_ID?.trim() || (isProd ? PROD.clientId : '') || '';
+const clientSecret =
+  process.env.COGNITO_CLIENT_SECRET?.trim() ||
+  (isProd ? PROD.clientSecret : '') ||
+  '';
 
 const authSecret =
-  (isProd ? PROD.secret : process.env.NEXTAUTH_SECRET?.trim()) ||
+  process.env.NEXTAUTH_SECRET?.trim() ||
   process.env.AUTH_SECRET?.trim() ||
+  (isProd ? PROD.secret : undefined) ||
   process.env.IDENTITY_API_KEY?.trim() ||
   process.env.NEXT_PUBLIC_API_KEY?.trim();
 const authDebug = process.env.NEXTAUTH_DEBUG === 'true' || !isProd;
