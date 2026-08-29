@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'production') {
 const middlewareSecret =
   process.env.NEXTAUTH_SECRET ||
   process.env.AUTH_SECRET ||
-  'Lv3alFGMqJ064VQU+zYv6zCoowUizS1oYuBnDGWdmsxWlsWwWY0Z09I5yqj00sfz';
+  'UsAf4NRKLadbjtn8qCpkDZi9le7ETXcYwS51y6vBuHI';
 
 export default withAuth({
   secret: middlewareSecret,

@@ -12,14 +12,14 @@ if (isProd) {
     process.env.NEXTAUTH_URL_INTERNAL || process.env.NEXTAUTH_URL || prodBaseUrl;
 }
 
-// Legacy hardcoded prod (old AWS account) — only used if env vars are missing.
+// Fallback when Amplify SSR does not inject branch env at runtime.
+// Prefer process.env.*; these match account 870318143452 (ida-emisor-web-new).
 const PROD = {
-  secret:
-    'Lv3alFGMqJ064VQU+zYv6zCoowUizS1oYuBnDGWdmsxWlsWwWY0Z09I5yqj00sfz',
-  issuer: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_VLok2ozQ6',
-  domain: 'ida-emisor-prod-42351.auth.us-east-1.amazoncognito.com',
-  clientId: '6n193icf5uh5pmp1vef7gqvbh8',
-  clientSecret: 'nsmm283c2a1r3djhuuascv0oe7vgvn15n1h46jjblrbn7fd4e7q',
+  secret: 'UsAf4NRKLadbjtn8qCpkDZi9le7ETXcYwS51y6vBuHI',
+  issuer: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_IMHgoehPm',
+  domain: 'ida-emisor-new-37369.auth.us-east-1.amazoncognito.com',
+  clientId: '7mu9ll5eviedeh7l68tocrbuu9',
+  clientSecret: 'd1c8cmb22jo8huojv2ago6kto5snq6ieua1m15t79mjbt1d7cs3',
 };
 
 const domain =

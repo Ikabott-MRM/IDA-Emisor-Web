@@ -8,6 +8,8 @@ frontend:
         - npm ci
     build:
       commands:
+        # Bake server env into the SSR bundle (Amplify branch env is available at build).
+        - env | grep -E '^(COGNITO_|NEXTAUTH_|IDENTITY_API_KEY|NEXT_PUBLIC_|AUTH_)' >> .env.production || true
         - npm run build
   artifacts:
     baseDirectory: .next

@@ -2,10 +2,10 @@ import crypto from 'crypto';
 
 const isProd = process.env.NODE_ENV === 'production';
 
-// Temporary production fallback until Amplify env resolution is fully stable.
+// Fallback for Amplify SSR when branch env is not injected at runtime.
 const PROD = {
-  clientId: '6n193icf5uh5pmp1vef7gqvbh8',
-  clientSecret: 'nsmm283c2a1r3djhuuascv0oe7vgvn15n1h46jjblrbn7fd4e7q',
+  clientId: '7mu9ll5eviedeh7l68tocrbuu9',
+  clientSecret: 'd1c8cmb22jo8huojv2ago6kto5snq6ieua1m15t79mjbt1d7cs3',
   region: 'us-east-1',
 };
 
