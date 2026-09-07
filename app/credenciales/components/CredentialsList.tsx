@@ -18,12 +18,23 @@ import { useMemo, useState } from 'react';
 import { useCredentialsQuery } from '@/hooks/queries/credentials';
 import { CredentialStatus, RequestCredential } from '@/@types/credential';
 import { CredentialForm } from '@/app/credenciales/components/CredentialForm';
-import Image from 'next/image';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import { useI18n } from '@/lib/i18n/I18nProvider';
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+/** Prefer document_id (A+B); fall back to filename from document_url. */
+function documentProxySrc(credential: {
+  document_id?: string;
+  document_url?: string;
+}): string {
+  if (credential.document_id?.trim()) {
+    return `/api/documents/${encodeURIComponent(credential.document_id.trim())}`;
+  }
+  const documentUrl = credential.document_url || '';
+  const cleaned = documentUrl.replace(/\\/g, '/').replace(/^\//, '');
+  const filename = cleaned.split('/').pop() || cleaned;
+  return `/api/documents/${encodeURIComponent(filename)}`;
+}
 
 export default function CredentialsList() {
   const { locale, t } = useI18n();
@@ -115,6 +126,7 @@ export default function CredentialsList() {
           id,
           status,
           document_url,
+          document_id,
           schema_id,
           created_at,
           code,
@@ -142,8 +154,9 @@ export default function CredentialsList() {
               <Typography variant="h6">
                 {t('details.documentType')}: {t(`credentialType.${schema_id}`)}
               </Typography>
-              <Image
-                src={`${apiBaseUrl}/${document_url.replace(/^\//, '')}`}
+              {/* eslint-disable-next-line @next/next/no-img-element -- proxied same-origin document */}
+              <img
+                src={documentProxySrc({ document_id, document_url })}
                 width={500}
                 height={320}
                 alt={t('details.identityImageAlt')}

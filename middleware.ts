@@ -1,21 +1,30 @@
 import { withAuth } from 'next-auth/middleware';
 
-const prodBaseUrl =
-  process.env.NEXTAUTH_URL?.trim() ||
-  'https://main.d26n82vm7gk12r.amplifyapp.com';
-if (process.env.NODE_ENV === 'production') {
-  process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || prodBaseUrl;
+const isProd = process.env.NODE_ENV === 'production';
+const nextAuthUrl = process.env.NEXTAUTH_URL?.trim() || '';
+const middlewareSecret =
+  process.env.NEXTAUTH_SECRET?.trim() ||
+  process.env.AUTH_SECRET?.trim() ||
+  '';
+
+if (isProd) {
+  if (!nextAuthUrl) {
+    throw new Error(
+      'Missing NEXTAUTH_URL for middleware. Set Amplify branch env and redeploy.',
+    );
+  }
+  if (!middlewareSecret) {
+    throw new Error(
+      'Missing NEXTAUTH_SECRET (or AUTH_SECRET) for middleware. Set Amplify branch env and redeploy.',
+    );
+  }
+  process.env.NEXTAUTH_URL = nextAuthUrl;
   process.env.NEXTAUTH_URL_INTERNAL =
-    process.env.NEXTAUTH_URL_INTERNAL || process.env.NEXTAUTH_URL || prodBaseUrl;
+    process.env.NEXTAUTH_URL_INTERNAL?.trim() || nextAuthUrl;
 }
 
-const middlewareSecret =
-  process.env.NEXTAUTH_SECRET ||
-  process.env.AUTH_SECRET ||
-  'UsAf4NRKLadbjtn8qCpkDZi9le7ETXcYwS51y6vBuHI';
-
 export default withAuth({
-  secret: middlewareSecret,
+  secret: middlewareSecret || undefined,
   pages: {
     signIn: '/login',
   },
@@ -23,6 +32,6 @@ export default withAuth({
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|images|api/auth|api/proxy|login).*)',
+    '/((?!_next/static|_next/image|favicon.ico|images|api/auth|api/proxy|api/documents|login).*)',
   ],
 };
