@@ -56,5 +56,15 @@
   "errors.unexpectedFetch": "Ocurrió un error inesperado al cargar las solicitudes.",
   "errors.unexpectedManage": "Ocurrió un error inesperado al procesar la credencial.",
   "auth.signOut": "Cerrar sesión",
-  "auth.redirectingLogin": "Redirigiendo al inicio de sesión seguro..."
+  "auth.redirectingLogin": "Redirigiendo al inicio de sesión seguro...",
+  "verifierCode.title": "Código de empresa (Verificador)",
+  "verifierCode.label": "Código de empresa (Verificador)",
+  "verifierCode.help": "Este código permite desbloquear la app Verificadora para descargar y contrastar la foto de la solicitud.",
+  "verifierCode.save": "Guardar / rotar",
+  "verifierCode.saved": "Código de empresa actualizado.",
+  "verifierCode.saveFailed": "No se pudo actualizar el código de empresa.",
+  "verifierCode.loadFailed": "No se pudo obtener el estado del código de empresa.",
+  "verifierCode.tooShort": "El código debe tener al menos 4 caracteres.",
+  "verifierCode.configured": "Código configurado. Última actualización: {{date}}",
+  "verifierCode.notConfigured": "Aún no hay un código de empresa configurado."
 }

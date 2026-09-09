@@ -56,5 +56,15 @@
   "errors.unexpectedFetch": "An unexpected error occurred while loading requests.",
   "errors.unexpectedManage": "An unexpected error occurred while processing the credential.",
   "auth.signOut": "Sign out",
-  "auth.redirectingLogin": "Redirecting to secure login..."
+  "auth.redirectingLogin": "Redirecting to secure login...",
+  "verifierCode.title": "Company code (Verifier)",
+  "verifierCode.label": "Company code (Verifier)",
+  "verifierCode.help": "This code unlocks the Verifier app so it can download and check the request photo.",
+  "verifierCode.save": "Save / rotate",
+  "verifierCode.saved": "Company code updated.",
+  "verifierCode.saveFailed": "Could not update the company code.",
+  "verifierCode.loadFailed": "Could not load company code status.",
+  "verifierCode.tooShort": "Code must be at least 4 characters.",
+  "verifierCode.configured": "Code configured. Last update: {{date}}",
+  "verifierCode.notConfigured": "No company code is configured yet."
 }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CredentialsList from '@/app/credenciales/components/CredentialsList';
+import VerifierCompanyCodeSettings from '@/app/credenciales/components/VerifierCompanyCodeSettings';
 import { SnackbarProvider } from '@/context/SnackbarContext';
 import { useI18n } from '@/lib/i18n/I18nProvider';
 import { Button } from '@mui/material';
@@ -73,6 +74,7 @@ function HomeContent() {
           <h2 className="text-xl font-semibold mt-4 mb-6 text-[#1A1A1A]">
             {t('requestsList.title')}
           </h2>
+          <VerifierCompanyCodeSettings />
           <CredentialsList />
         </div>
       </main>
