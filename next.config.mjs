@@ -1,30 +1,46 @@
 /** @type {import('next').NextConfig} */
 
-function buildImageRemotePatterns() {
-  const legacy = {
-    protocol: 'https',
-    hostname: 'api-ssi.iovf.org',
-    pathname: '/**',
-  };
-  const raw = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!raw?.trim()) {
-    return [legacy];
-  }
+function patternFromUrl(raw, fallbackPathname = '/**') {
+  if (!raw?.trim()) return null;
   try {
     const u = new URL(raw);
     const protocol = u.protocol === 'http:' ? 'http' : 'https';
     const pattern = {
       protocol,
       hostname: u.hostname,
-      pathname: '/**',
+      pathname: fallbackPathname,
     };
-    if (u.port) {
-      pattern.port = u.port;
-    }
-    return [pattern, legacy];
+    if (u.port) pattern.port = u.port;
+    return pattern;
   } catch {
-    return [legacy];
+    return null;
   }
+}
+
+function buildImageRemotePatterns() {
+  const patterns = [];
+  const seen = new Set();
+  const add = (p) => {
+    if (!p) return;
+    const key = `${p.protocol}://${p.hostname}${p.port || ''}${p.pathname}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    patterns.push(p);
+  };
+
+  // Tenant logo CDNs (Amplify NEXT_PUBLIC_LOGO_* + common client hosts)
+  add(patternFromUrl(process.env.NEXT_PUBLIC_LOGO_HEADER_URL));
+  add(patternFromUrl(process.env.NEXT_PUBLIC_LOGO_FOOTER_URL));
+  for (const host of [
+    'storage.googleapis.com',
+    'geyser.fund',
+    'avaldao.com',
+    'api-ssi.iovf.org',
+  ]) {
+    add({ protocol: 'https', hostname: host, pathname: '/**' });
+  }
+  add(patternFromUrl(process.env.NEXT_PUBLIC_API_BASE_URL));
+  return patterns;
 }
 
 /** Browser connect-src: same-origin API proxy plus optional API origin and HTTPS APIs. */
