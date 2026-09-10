@@ -64,3 +64,14 @@ export const zijinBrand = tenantBrand;
 
 export const DRIVER_LICENSE_SCHEMA_ID = 'drivers_license';
 export const PRODUCTION_REGISTRY_SCHEMA_ID = 'production_registry';
+export const DONOR_SCHEMA_ID = 'donor';
+export const FUNDRAISER_SCHEMA_ID = 'fundraiser';
+export const ASSOCIATE_SCHEMA_ID = 'associate';
+
+/** Schemas that use first/last name (+ optional fundraiser fields), not license categories. */
+export const NAME_BASED_SCHEMA_IDS = [
+  DONOR_SCHEMA_ID,
+  FUNDRAISER_SCHEMA_ID,
+  ASSOCIATE_SCHEMA_ID,
+  DRIVER_LICENSE_SCHEMA_ID,
+] as const;

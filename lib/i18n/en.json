@@ -66,5 +66,10 @@
   "verifierCode.loadFailed": "Could not load company code status.",
   "verifierCode.tooShort": "Code must be at least 4 characters.",
   "verifierCode.configured": "Code configured. Last update: {{date}}",
-  "verifierCode.notConfigured": "No company code is configured yet."
+  "verifierCode.notConfigured": "No company code is configured yet.",
+  "credentialType.donor": "Donor",
+  "credentialType.fundraiser": "Fundraiser",
+  "credentialType.associate": "Associate",
+  "form.projectName": "Project name",
+  "form.role": "Role"
 }
