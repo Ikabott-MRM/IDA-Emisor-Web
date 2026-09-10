@@ -8,20 +8,27 @@ import {
   TextField,
   Typography,
   Alert,
+  IconButton,
+  InputAdornment,
 } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useI18n } from '@/lib/i18n/I18nProvider';
 import { useSnackbar } from '@/context/SnackbarContext';
 
 type StatusResponse = {
   configured?: boolean;
   updatedAt?: string | null;
+  code?: string | null;
   error?: string;
 };
 
 export default function VerifierCompanyCodeSettings() {
   const { t } = useI18n();
   const { showSnackbar } = useSnackbar();
-  const [code, setCode] = useState('');
+  const [newCode, setNewCode] = useState('');
+  const [currentCode, setCurrentCode] = useState<string | null>(null);
+  const [showCurrent, setShowCurrent] = useState(false);
   const [configured, setConfigured] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,6 +44,10 @@ export default function VerifierCompanyCodeSettings() {
       }
       setConfigured(Boolean(data.configured));
       setUpdatedAt(data.updatedAt ?? null);
+      setCurrentCode(
+        typeof data.code === 'string' && data.code.length > 0 ? data.code : null,
+      );
+      setShowCurrent(false);
     } catch (err) {
       console.error(err);
       showSnackbar(t('verifierCode.loadFailed'));
@@ -50,7 +61,7 @@ export default function VerifierCompanyCodeSettings() {
   }, [loadStatus]);
 
   const onSave = async () => {
-    const trimmed = code.trim();
+    const trimmed = newCode.trim();
     if (trimmed.length < 4) {
       showSnackbar(t('verifierCode.tooShort'));
       return;
@@ -68,11 +79,13 @@ export default function VerifierCompanyCodeSettings() {
           (data as { error?: string }).error || `HTTP ${res.status}`,
         );
       }
-      setCode('');
+      setNewCode('');
       setConfigured(true);
       setUpdatedAt(
         (data as { updatedAt?: string }).updatedAt ?? new Date().toISOString(),
       );
+      setCurrentCode(trimmed);
+      setShowCurrent(false);
       showSnackbar(t('verifierCode.saved'));
     } catch (err) {
       console.error(err);
@@ -97,24 +110,63 @@ export default function VerifierCompanyCodeSettings() {
       {loading ? (
         <CircularProgress size={24} />
       ) : (
-        <Alert severity={configured ? 'success' : 'warning'} className="mb-3">
-          {configured
-            ? t('verifierCode.configured', {
-                date: updatedAt
-                  ? new Date(updatedAt).toLocaleString()
-                  : '—',
-              })
-            : t('verifierCode.notConfigured')}
-        </Alert>
+        <>
+          <Alert severity={configured ? 'success' : 'warning'} className="mb-3">
+            {configured
+              ? t('verifierCode.configured', {
+                  date: updatedAt
+                    ? new Date(updatedAt).toLocaleString()
+                    : '—',
+                })
+              : t('verifierCode.notConfigured')}
+          </Alert>
+
+          {configured && currentCode === null && (
+            <Alert severity="info" className="mb-3">
+              {t('verifierCode.reSaveToEnableView')}
+            </Alert>
+          )}
+
+          {configured && currentCode !== null && (
+            <TextField
+              type={showCurrent ? 'text' : 'password'}
+              label={t('verifierCode.currentLabel')}
+              value={currentCode}
+              size="small"
+              fullWidth
+              className="mb-3"
+              InputProps={{
+                readOnly: true,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showCurrent
+                          ? t('verifierCode.hide')
+                          : t('verifierCode.show')
+                      }
+                      onClick={() => setShowCurrent((v) => !v)}
+                      edge="end"
+                      size="small"
+                    >
+                      {showCurrent ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mb: 2 }}
+            />
+          )}
+        </>
       )}
 
       <Box className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-start">
         <TextField
           type="password"
           autoComplete="new-password"
-          label={t('verifierCode.label')}
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
+          label={t('verifierCode.rotateLabel')}
+          value={newCode}
+          onChange={(e) => setNewCode(e.target.value)}
           size="small"
           fullWidth
           inputProps={{ minLength: 4 }}
@@ -122,7 +174,7 @@ export default function VerifierCompanyCodeSettings() {
         <Button
           variant="contained"
           onClick={() => void onSave()}
-          disabled={saving || code.trim().length < 4}
+          disabled={saving || newCode.trim().length < 4}
           sx={{ minWidth: 140, height: 40 }}
         >
           {saving ? <CircularProgress size={20} color="inherit" /> : t('verifierCode.save')}
