@@ -20,6 +20,9 @@ import 'dayjs/locale/es';
 import {
   DRIVER_LICENSE_SCHEMA_ID,
   PRODUCTION_REGISTRY_SCHEMA_ID,
+  DONOR_SCHEMA_ID,
+  FUNDRAISER_SCHEMA_ID,
+  ASSOCIATE_SCHEMA_ID,
   tenantBrand,
 } from '@/lib/brand/tenant';
 
@@ -27,6 +30,8 @@ type FormData = {
   [key: `${string}_${'firstName'}`]: string;
   [key: `${string}_${'lastName'}`]: string;
   [key: `${string}_${'licenseCategory'}`]: string;
+  [key: `${string}_${'projectName'}`]: string;
+  [key: `${string}_${'role'}`]: string;
   [key: `${string}_${'expirationDate'}`]: Dayjs;
   [key: `${string}_${'type'}`]: string;
   [key: `${string}_${'quantity'}`]: string;
@@ -74,6 +79,12 @@ const CredentialForm = ({
   const { showSnackbar } = useSnackbar();
   const isDriverLicense = schemaId === DRIVER_LICENSE_SCHEMA_ID;
   const isProductionRegistry = schemaId === PRODUCTION_REGISTRY_SCHEMA_ID;
+  const isFundraiser = schemaId === FUNDRAISER_SCHEMA_ID;
+  const isNameBased =
+    schemaId === DONOR_SCHEMA_ID ||
+    schemaId === FUNDRAISER_SCHEMA_ID ||
+    schemaId === ASSOCIATE_SCHEMA_ID ||
+    schemaId === DRIVER_LICENSE_SCHEMA_ID;
 
   const textValidation = useMemo(
     () => ({
@@ -116,12 +127,25 @@ const CredentialForm = ({
         fecha_entrega: values[`${id}_deliveryDate`]?.format('YYYY-MM-DD') ?? '',
       };
       expDate = values[`${id}_deliveryDate`]?.add(1, 'year').format('YYYY-MM-DD') ?? '';
-    } else {
+    } else if (isDriverLicense) {
       identifiableData = {
         name: values[`${id}_firstName`],
         lastname: values[`${id}_lastName`],
         category: values[`${id}_licenseCategory`],
       };
+      expDate = values[`${id}_expirationDate`]?.format('YYYY-MM-DD') ?? '';
+    } else {
+      // donor / fundraiser / associate (and any future name-based types)
+      identifiableData = {
+        name: values[`${id}_firstName`],
+        lastname: values[`${id}_lastName`],
+      };
+      if (isFundraiser) {
+        identifiableData.projectName = values[`${id}_projectName`];
+        if (values[`${id}_role`]) {
+          identifiableData.role = values[`${id}_role`];
+        }
+      }
       expDate = values[`${id}_expirationDate`]?.format('YYYY-MM-DD') ?? '';
     }
 
@@ -173,7 +197,7 @@ const CredentialForm = ({
           sx={{ mt: 2 }}
         >
           <Grid container spacing={2}>
-            {isDriverLicense && (
+            {isNameBased && (
               <>
                 <Grid item xs={12}>
                   <TextField
@@ -201,6 +225,48 @@ const CredentialForm = ({
                     }
                   />
                 </Grid>
+                {isFundraiser && (
+                  <>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label={t('form.projectName')}
+                        {...register(`${id}_projectName`, {
+                          required: t('validation.required'),
+                          maxLength: {
+                            value: 80,
+                            message: t('validation.maxLength40'),
+                          },
+                        })}
+                        error={!!errors[`${id}_projectName`]}
+                        helperText={
+                          errors[`${id}_projectName`]
+                            ? errors[`${id}_projectName`]?.message
+                            : ''
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label={t('form.role')}
+                        {...register(`${id}_role`, {
+                          maxLength: {
+                            value: 40,
+                            message: t('validation.maxLength40'),
+                          },
+                        })}
+                        error={!!errors[`${id}_role`]}
+                        helperText={
+                          errors[`${id}_role`]
+                            ? errors[`${id}_role`]?.message
+                            : ''
+                        }
+                      />
+                    </Grid>
+                  </>
+                )}
+                {isDriverLicense && (
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
@@ -230,6 +296,7 @@ const CredentialForm = ({
                     </MenuItem>
                   </TextField>
                 </Grid>
+                )}
                 <Grid item xs={12}>
                   <LocalizationProvider
                     dateAdapter={AdapterDayjs}

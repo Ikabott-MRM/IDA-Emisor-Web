@@ -66,5 +66,10 @@
   "verifierCode.loadFailed": "No se pudo obtener el estado del código de empresa.",
   "verifierCode.tooShort": "El código debe tener al menos 4 caracteres.",
   "verifierCode.configured": "Código configurado. Última actualización: {{date}}",
-  "verifierCode.notConfigured": "Aún no hay un código de empresa configurado."
+  "verifierCode.notConfigured": "Aún no hay un código de empresa configurado.",
+  "credentialType.donor": "Donante",
+  "credentialType.fundraiser": "Fundraiser",
+  "credentialType.associate": "Socio",
+  "form.projectName": "Nombre del proyecto",
+  "form.role": "Rol"
 }
