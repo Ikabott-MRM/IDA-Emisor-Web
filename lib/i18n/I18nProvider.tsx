@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import en from './en.json';
 import es from './es.json';
+import { tenantBrand } from '@/lib/brand/tenant';
 
 export type AppLocale = 'en' | 'es';
 
@@ -17,9 +18,32 @@ export type TranslateFn = (key: string, vars?: Record<string, string>) => string
 
 const STORAGE_KEY = 'emisor-locale';
 
+function withTenantBranding(
+  dict: Record<string, string>,
+  locale: AppLocale,
+): Record<string, string> {
+  const name = tenantBrand.name;
+  if (locale === 'es') {
+    return {
+      ...dict,
+      'metadata.title': `Portal Emisor — ${name}`,
+      'header.logoAlt': `Logo de ${name}`,
+      'header.portalTitle': `${name} — Portal Emisor`,
+      'footer.logoAlt': `Logo de ${name}`,
+    };
+  }
+  return {
+    ...dict,
+    'metadata.title': `${name} Issuer Portal`,
+    'header.logoAlt': `${name} logo`,
+    'header.portalTitle': `${name} — Issuer Portal`,
+    'footer.logoAlt': `${name} logo`,
+  };
+}
+
 const dictionaries: Record<AppLocale, Record<string, string>> = {
-  en: en as Record<string, string>,
-  es: es as Record<string, string>,
+  en: withTenantBranding(en as Record<string, string>, 'en'),
+  es: withTenantBranding(es as Record<string, string>, 'es'),
 };
 
 function lookup(dict: Record<string, string>, key: string): string {

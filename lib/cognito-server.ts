@@ -1,32 +1,27 @@
 import crypto from 'crypto';
 
-const isProd = process.env.NODE_ENV === 'production';
-
-// Fallback for Amplify SSR when branch env is not injected at runtime.
-const PROD = {
-  clientId: '7mu9ll5eviedeh7l68tocrbuu9',
-  clientSecret: 'd1c8cmb22jo8huojv2ago6kto5snq6ieua1m15t79mjbt1d7cs3',
-  region: 'us-east-1',
-};
-
 export function getCognitoServerConfig() {
-  return {
-    clientId:
-      process.env.COGNITO_CLIENT_ID?.trim() ||
-      (isProd ? PROD.clientId : '') ||
-      '',
-    clientSecret:
-      process.env.COGNITO_CLIENT_SECRET?.trim() ||
-      (isProd ? PROD.clientSecret : '') ||
-      '',
-    region: process.env.AWS_REGION || PROD.region,
-  };
+  const isProd = process.env.NODE_ENV === 'production';
+  const clientId = process.env.COGNITO_CLIENT_ID?.trim() || '';
+  const clientSecret = process.env.COGNITO_CLIENT_SECRET?.trim() || '';
+  const region =
+    process.env.AWS_REGION?.trim() ||
+    process.env.COGNITO_REGION?.trim() ||
+    'us-east-1';
+
+  if (isProd && (!clientId || !clientSecret)) {
+    throw new Error(
+      'Missing COGNITO_CLIENT_ID or COGNITO_CLIENT_SECRET. Configure Amplify env and redeploy.',
+    );
+  }
+
+  return { clientId, clientSecret, region };
 }
 
 export function buildSecretHash(
   username: string,
   clientId: string,
-  clientSecret?: string
+  clientSecret?: string,
 ) {
   if (!clientSecret) {
     return undefined;

@@ -20,8 +20,8 @@ import 'dayjs/locale/es';
 import {
   DRIVER_LICENSE_SCHEMA_ID,
   PRODUCTION_REGISTRY_SCHEMA_ID,
-  zijinBrand,
-} from '@/lib/brand/zijin';
+  tenantBrand,
+} from '@/lib/brand/tenant';
 
 type FormData = {
   [key: `${string}_${'firstName'}`]: string;
@@ -364,7 +364,7 @@ const CredentialForm = ({
             variant="contained"
             className="!my-3 w-full"
             type="submit"
-            sx={{ backgroundColor: zijinBrand.colors.primary }}
+            sx={{ backgroundColor: tenantBrand.colors.primary }}
           >
             {t('form.approve')}
           </Button>
@@ -374,7 +374,7 @@ const CredentialForm = ({
         <Button
           variant="contained"
           className="!mb-3"
-          sx={{ backgroundColor: zijinBrand.colors.primary }}
+          sx={{ backgroundColor: tenantBrand.colors.primary }}
           onClick={() => setShowForm(true)}
         >
           {t('form.approve')}
@@ -383,7 +383,7 @@ const CredentialForm = ({
       {!isPending && (
         <Button
           variant="contained"
-          sx={{ backgroundColor: zijinBrand.colors.accent }}
+          sx={{ backgroundColor: tenantBrand.colors.accent }}
           onClick={rejectCredential}
         >
           {t('form.reject')}

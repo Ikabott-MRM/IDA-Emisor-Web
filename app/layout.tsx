@@ -3,11 +3,12 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { I18nProvider } from '@/lib/i18n/I18nProvider';
 import { AuthSessionProvider } from '@/app/AuthSessionProvider';
+import { tenantBrand } from '@/lib/brand/tenant';
 
 const roboto = Roboto({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
 export const metadata: Metadata = {
-  title: 'Zijin Mining Issuer Portal',
+  title: `${tenantBrand.name} Issuer Portal`,
 };
 
 export default function RootLayout({
