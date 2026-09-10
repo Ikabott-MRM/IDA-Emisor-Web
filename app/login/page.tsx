@@ -2,10 +2,11 @@
 
 import { FormEvent, useState } from 'react';
 import { signIn } from 'next-auth/react';
-import Image from 'next/image';
-import { tenantBrand } from '@/lib/brand/tenant';
+import { BrandProvider, useBrand } from '@/context/BrandProvider';
+import BrandLogo from '@/components/BrandLogo';
 
-export default function LoginPage() {
+function LoginForm() {
+  const brand = useBrand();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
@@ -65,25 +66,29 @@ export default function LoginPage() {
   return (
     <main
       className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: tenantBrand.colors.background }}
+      style={{ backgroundColor: brand.colors.background }}
     >
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow">
         <div className="mb-6 flex justify-center">
-          <Image
-            src={tenantBrand.logos.header}
-            alt={tenantBrand.name}
+          <BrandLogo
+            src={brand.logos.header}
+            alt={brand.name}
+            fallbackText={brand.name}
             width={188}
             height={56}
             priority
           />
         </div>
-        <h1 className="mb-4 text-xl font-semibold text-gray-900">Secure login</h1>
+        <h1 className="mb-4 text-xl font-semibold text-gray-900">
+          {brand.name}
+        </h1>
+        <p className="mb-4 text-sm text-gray-600">Secure login</p>
 
         <button
           type="button"
           onClick={handleSignIn}
           className="mb-6 w-full rounded px-4 py-2 text-white"
-          style={{ backgroundColor: tenantBrand.colors.primary }}
+          style={{ backgroundColor: brand.colors.primary }}
         >
           Sign in with Cognito
         </button>
@@ -123,7 +128,7 @@ export default function LoginPage() {
             type="submit"
             disabled={loading}
             className="w-full rounded px-4 py-2 text-white disabled:opacity-60"
-            style={{ backgroundColor: tenantBrand.colors.primaryDark }}
+            style={{ backgroundColor: brand.colors.primaryDark }}
           >
             {loading
               ? 'Please wait...'
@@ -136,5 +141,13 @@ export default function LoginPage() {
         {message ? <p className="mt-3 text-sm text-gray-700">{message}</p> : null}
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <BrandProvider>
+      <LoginForm />
+    </BrandProvider>
   );
 }

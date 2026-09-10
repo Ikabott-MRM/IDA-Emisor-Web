@@ -1,42 +1,42 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CredentialsList from '@/app/credenciales/components/CredentialsList';
 import VerifierCompanyCodeSettings from '@/app/credenciales/components/VerifierCompanyCodeSettings';
 import { SnackbarProvider } from '@/context/SnackbarContext';
+import { BrandProvider, useBrand } from '@/context/BrandProvider';
+import BrandLogo from '@/components/BrandLogo';
 import { useI18n } from '@/lib/i18n/I18nProvider';
 import { Button } from '@mui/material';
 import { signOut } from 'next-auth/react';
-import { zijinBrand } from '@/lib/brand/zijin';
 
 function HomeContent() {
   const { locale, setLocale, t } = useI18n();
+  const brand = useBrand();
 
   return (
     <div className="flex flex-col min-h-screen">
       <main
         className="flex-grow flex flex-col items-center"
-        style={{ backgroundColor: zijinBrand.colors.background }}
+        style={{ backgroundColor: brand.colors.background }}
       >
         <header
           className="w-full shadow-md top-0 left-0 z-50"
-          style={{ backgroundColor: zijinBrand.colors.primary }}
+          style={{ backgroundColor: brand.colors.primary }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-center justify-center gap-3 py-4">
-              <Image
-                src={zijinBrand.logos.header}
-                alt={t(zijinBrand.logos.headerAltKey)}
+              <BrandLogo
+                src={brand.logos.header}
+                alt={t(brand.logos.headerAltKey)}
+                fallbackText={brand.name}
                 width={188}
                 height={56}
                 priority
               />
               <div className="border-l-4 border-white pl-3 ml-3">
-                <h1 className="text-2xl font-bold text-white">
-                  {t('header.portalTitle')}
-                </h1>
+                <h1 className="text-2xl font-bold text-white">{brand.name}</h1>
                 <h2 className="text-xl text-white">
                   {t('header.portalSubtitle')}
                 </h2>
@@ -80,7 +80,7 @@ function HomeContent() {
       </main>
       <footer
         className="w-full text-white py-4 flex justify-center items-center"
-        style={{ backgroundColor: zijinBrand.colors.primaryDark }}
+        style={{ backgroundColor: brand.colors.primaryDark }}
       >
         <p
           className="text-sm font-bold"
@@ -89,9 +89,10 @@ function HomeContent() {
           {t('footer.poweredBy')}
         </p>
         <div className="ml-2">
-          <Image
-            src={zijinBrand.logos.footer}
-            alt={t(zijinBrand.logos.footerAltKey)}
+          <BrandLogo
+            src={brand.logos.footer}
+            alt={t(brand.logos.footerAltKey)}
+            fallbackText={brand.name}
             width={188}
             height={56}
             priority
@@ -118,7 +119,9 @@ export default function Home() {
   return (
     <QueryClientProvider client={queryClient}>
       <SnackbarProvider>
-        <HomeContent />
+        <BrandProvider>
+          <HomeContent />
+        </BrandProvider>
       </SnackbarProvider>
     </QueryClientProvider>
   );
