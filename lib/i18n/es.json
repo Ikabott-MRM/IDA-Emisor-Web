@@ -71,5 +71,10 @@
   "credentialType.fundraiser": "Fundraiser",
   "credentialType.associate": "Socio",
   "form.projectName": "Nombre del proyecto",
-  "form.role": "Rol"
+  "form.role": "Rol",
+  "verifierCode.currentLabel": "Código actual",
+  "verifierCode.rotateLabel": "Nuevo código (rotar)",
+  "verifierCode.show": "Mostrar",
+  "verifierCode.hide": "Ocultar",
+  "verifierCode.reSaveToEnableView": "Volvé a guardar el código una vez para habilitar la visualización."
 }
