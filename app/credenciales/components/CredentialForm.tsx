@@ -160,8 +160,9 @@ const CredentialForm = ({
         onSuccess: () => {
           showSnackbar(t('snackbar.approved'));
         },
-        onError: () => {
-          showSnackbar(t('snackbar.acceptFailed'));
+        onError: (err: unknown) => {
+          const msg = err instanceof Error ? err.message : '';
+          showSnackbar(msg || t('snackbar.acceptFailed'));
         },
       },
     );

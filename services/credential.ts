@@ -65,10 +65,27 @@ export default {
           id,
           action,
           identifiable_data,
-          exp_date,
+          exp_date:
+            exp_date && typeof exp_date === 'object' && 'format' in exp_date
+              ? (exp_date as Dayjs).format('YYYY-MM-DD')
+              : exp_date,
         },
+        { timeout: 120000 },
       );
-      return response?.data;
+      const data = response?.data;
+      if (data && typeof data.status === 'number' && data.status >= 400) {
+        const detail = (
+          data.error?.message ||
+          data.message ||
+          ''
+        ).trim();
+        throw new Error(
+          detail
+            ? t('errors.manageCredentialWithDetail', { message: detail })
+            : t('errors.manageCredential'),
+        );
+      }
+      return data;
     } catch (e: unknown) {
       if (isAxiosError(e)) {
         const error: ErrorResponse | undefined = e.response?.data;
