@@ -33,10 +33,12 @@ function pick(value: string | undefined, fallback: string): string {
 }
 
 
-function defaultFavicon(): string {
-  const explicit = process.env.NEXT_PUBLIC_FAVICON_URL?.trim();
+export function resolveFavicon(opts?: { url?: string; name?: string }): string {
+  const explicit = (opts?.url || process.env.NEXT_PUBLIC_FAVICON_URL || '').trim();
   if (explicit) return explicit;
-  const name = (process.env.NEXT_PUBLIC_TENANT_NAME || '').trim().toLowerCase();
+  const name = (opts?.name || process.env.NEXT_PUBLIC_TENANT_NAME || '')
+    .trim()
+    .toLowerCase();
   if (name.includes('geyser')) return '/images/tenants/geyser-favicon.png';
   if (name.includes('avaldao')) return '/images/tenants/avaldao-favicon.png';
   return '/favicon.ico';
@@ -65,7 +67,7 @@ export function getTenantBrand(): TenantBrand {
       headerAltKey: 'header.logoAlt',
       footerAltKey: 'footer.logoAlt',
     },
-    favicon: defaultFavicon(),
+    favicon: resolveFavicon(),
   };
 }
 

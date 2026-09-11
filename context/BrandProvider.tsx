@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { tenantBrand, type TenantBrand } from '@/lib/brand/tenant';
+import { resolveFavicon, tenantBrand, type TenantBrand } from '@/lib/brand/tenant';
 
 const BrandContext = createContext<TenantBrand>(tenantBrand);
 
@@ -42,6 +42,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
       if (!res.ok) return;
       const data: unknown = await res.json();
       if (!isTenantBrand(data)) return;
+      const incoming = data as TenantBrand & { favicon?: string };
       setBrand({
         name: data.name,
         colors: { ...data.colors },
@@ -51,6 +52,7 @@ export function BrandProvider({ children }: { children: ReactNode }) {
           headerAltKey: 'header.logoAlt',
           footerAltKey: 'footer.logoAlt',
         },
+        favicon: resolveFavicon({ url: incoming.favicon, name: data.name }),
       });
     } catch {
       // Keep previous brand (SSR/defaults).
