@@ -82,22 +82,14 @@ function HomeContent() {
         className="w-full text-white py-4 flex justify-center items-center"
         style={{ backgroundColor: brand.colors.primaryDark }}
       >
-        <p
-          className="text-sm font-bold"
-          style={{ fontFamily: 'Roboto, sans-serif' }}
-        >
-          {t('footer.poweredBy')}
-        </p>
-        <div className="ml-2">
-          <BrandLogo
-            src={brand.logos.footer}
-            alt={t(brand.logos.footerAltKey)}
-            fallbackText={brand.name}
-            width={188}
-            height={56}
-            priority
-          />
-        </div>
+        <BrandLogo
+          src={brand.logos.footer}
+          alt={t(brand.logos.footerAltKey)}
+          fallbackText={brand.name}
+          width={188}
+          height={56}
+          priority
+        />
       </footer>
     </div>
   );
