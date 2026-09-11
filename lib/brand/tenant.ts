@@ -23,11 +23,23 @@ export type TenantBrand = {
     headerAltKey: 'header.logoAlt';
     footerAltKey: 'footer.logoAlt';
   };
+  /** Tab icon. Prefer a square PNG/ICO under /images/tenants/. */
+  favicon: string;
 };
 
 function pick(value: string | undefined, fallback: string): string {
   const v = value?.trim();
   return v || fallback;
+}
+
+
+function defaultFavicon(): string {
+  const explicit = process.env.NEXT_PUBLIC_FAVICON_URL?.trim();
+  if (explicit) return explicit;
+  const name = (process.env.NEXT_PUBLIC_TENANT_NAME || '').trim().toLowerCase();
+  if (name.includes('geyser')) return '/images/tenants/geyser-favicon.png';
+  if (name.includes('avaldao')) return '/images/tenants/avaldao-favicon.png';
+  return '/favicon.ico';
 }
 
 /** Read brand from process.env (server / build). Safe defaults only. */
@@ -53,6 +65,7 @@ export function getTenantBrand(): TenantBrand {
       headerAltKey: 'header.logoAlt',
       footerAltKey: 'footer.logoAlt',
     },
+    favicon: defaultFavicon(),
   };
 }
 

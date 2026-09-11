@@ -10,6 +10,14 @@ frontend:
       commands:
         # Bake server env into the SSR bundle (Amplify branch env is available at build).
         - env | grep -E '^(COGNITO_|NEXTAUTH_|IDENTITY_API_KEY|NEXT_PUBLIC_|AUTH_)' >> .env.production || true
+        # Browsers still request /favicon.ico (Next default is the black triangle).
+        - |
+          NAME=$(printf '%s' "${NEXT_PUBLIC_TENANT_NAME:-}" | tr '[:upper:]' '[:lower:]')
+          if [ "$NAME" = "geyser" ] && [ -f public/images/tenants/geyser-favicon.ico ]; then
+            cp -f public/images/tenants/geyser-favicon.ico app/favicon.ico
+          elif [ "$NAME" = "avaldao" ] && [ -f public/images/tenants/avaldao-favicon.ico ]; then
+            cp -f public/images/tenants/avaldao-favicon.ico app/favicon.ico
+          fi
         - npm run build
   artifacts:
     baseDirectory: .next

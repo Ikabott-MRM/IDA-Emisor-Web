@@ -11,6 +11,10 @@ const brand = getTenantBrand();
 
 export const metadata: Metadata = {
   title: brand.name,
+  icons: {
+    icon: brand.favicon,
+    apple: brand.favicon,
+  },
 };
 
 export default function RootLayout({
